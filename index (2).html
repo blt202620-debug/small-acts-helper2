@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Small Acts Writing Helper</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+KR:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #f0f7ff; min-height: 100vh; padding: 24px 16px; }
+  .container { background: #fff; border-radius: 20px; padding: 28px 24px; max-width: 600px; width: 100%; margin: 0 auto; box-shadow: 0 6px 32px rgba(0,80,200,0.08); }
+  .title { font-family: 'Nunito', sans-serif; font-size: 1.4rem; font-weight: 900; color: #1a3a6b; text-align: center; margin-bottom: 4px; }
+  .sub { font-size: 0.82rem; color: #7a90b0; text-align: center; margin-bottom: 20px; }
+  .input-box { background: #f5f8ff; border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+  .lbl { font-size: 0.8rem; font-weight: 700; color: #4a6490; margin-bottom: 6px; display: block; }
+  textarea { width: 100%; border: 1.5px solid #d0dcf0; border-radius: 10px; padding: 10px 12px; font-family: 'Noto Sans KR', sans-serif; font-size: 0.9rem; color: #1a3a6b; background: #fff; resize: none; outline: none; margin-bottom: 10px; }
+  textarea:last-child { margin-bottom: 0; }
+  textarea:focus { border-color: #3a6bd4; }
+  .gen-btn { width: 100%; padding: 14px; background: #3a6bd4; color: #fff; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.05rem; cursor: pointer; margin-bottom: 18px; transition: opacity 0.15s; }
+  .gen-btn:hover { opacity: 0.88; }
+  .gen-btn:disabled { background: #b0c0d8; cursor: not-allowed; }
+  .loading { text-align: center; color: #7a90b0; font-size: 0.9rem; padding: 12px; display: none; }
+  .section { border-radius: 14px; padding: 16px; margin-bottom: 14px; display: none; }
+  .past-sec { border: 2px solid #ffd966; background: #fffbe6; }
+  .slogan-sec { border: 2px solid #64b5f6; background: #e8f4ff; }
+  .plan-sec { border: 2px solid #81c784; background: #edf7ee; }
+  .sec-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+  .past-sec .sec-label { color: #b07a00; }
+  .slogan-sec .sec-label { color: #1a6ab0; }
+  .plan-sec .sec-label { color: #2e7d32; }
+  .en-text { font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800; color: #1a3a6b; margin-bottom: 2px; }
+  .kr-text { font-size: 0.82rem; color: #5a7090; margin-bottom: 12px; }
+  .scramble-lbl { font-size: 0.78rem; color: #7a90b0; margin-bottom: 6px; }
+  .answer-box { min-height: 40px; border: 1.5px dashed #b0c0d8; border-radius: 8px; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; background: #fff; }
+  .word-pool { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .word { padding: 5px 12px; background: #fff; border: 1.5px solid #b0c8f0; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; color: #1a3a6b; cursor: pointer; user-select: none; transition: all 0.12s; }
+  .word:hover { background: #ddeeff; border-color: #3a6bd4; }
+  .word.used { opacity: 0.2; pointer-events: none; }
+  .placed-word { padding: 5px 12px; background: #ddeeff; border: 1.5px solid #3a6bd4; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; color: #1a3a6b; cursor: pointer; transition: all 0.12s; }
+  .placed-word:hover { background: #ffe0e0; border-color: #e53935; color: #c0392b; }
+  .check-row { display: flex; gap: 8px; align-items: center; }
+  .check-btn { padding: 6px 14px; background: #fff; border: 1.5px solid #b0c0d8; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.82rem; color: #4a6490; cursor: pointer; }
+  .check-btn:hover { background: #f0f5ff; }
+  .fb { font-size: 0.85rem; font-weight: 700; }
+  .fb.ok { color: #2e7d32; }
+  .fb.fail { color: #c0392b; }
+  .plan-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #c8e6c9; }
+  .plan-item:last-child { border-bottom: none; }
+  .plan-num { font-family: 'Nunito', sans-serif; font-weight: 900; color: #2e7d32; min-width: 20px; font-size: 1rem; }
+  .plan-en { font-family: 'Nunito', sans-serif; font-size: 0.92rem; font-weight: 700; color: #1a3a6b; }
+  .plan-kr { font-size: 0.78rem; color: #5a7090; margin-top: 2px; }
+  .error-msg { background: #fff0f0; border: 1.5px solid #ffaaaa; border-radius: 10px; padding: 12px; color: #c0392b; font-size: 0.85rem; margin-bottom: 14px; display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">✏️ Small Acts Writing Helper</div>
+  <div class="sub">한글로 아이디어를 쓰면 영어 문장을 만들어줄게요!</div>
+
+  <div class="input-box">
+    <label class="lbl">📍 어떤 문제를 발견했나요? (한글로)</label>
+    <textarea id="prob" rows="2" placeholder="예) 복도에서 뛰어다니는 학생들 때문에 친구가 다쳤어요."></textarea>
+    <label class="lbl">💡 어떻게 해결하고 싶나요? (한글로)</label>
+    <textarea id="sol" rows="2" placeholder="예) 복도에서 천천히 걷도록 캠페인을 하고 싶어요."></textarea>
+  </div>
+
+  <button class="gen-btn" id="genBtn" onclick="generate()">🪄 영어 문장 만들기</button>
+  <div class="loading" id="loading">✨ AI가 문장을 만들고 있어요...</div>
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="section past-sec" id="pastSec">
+    <span class="sec-label">📖 과거시제 문장 — 문제 상황 설명하기</span>
+    <div class="en-text" id="pastEn"></div>
+    <div class="kr-text" id="pastKr"></div>
+    <div class="scramble-lbl">👇 단어를 순서대로 클릭해서 문장을 완성해봐요!</div>
+    <div class="answer-box" id="pastAns"></div>
+    <div class="word-pool" id="pastPool"></div>
+    <div class="check-row">
+      <button class="check-btn" onclick="doCheck('past')">✅ 확인</button>
+      <button class="check-btn" onclick="doReset('past')">🔄 다시</button>
+      <span class="fb" id="pastFb"></span>
+    </div>
+  </div>
+
+  <div class="section slogan-sec" id="sloganSec">
+    <span class="sec-label">📢 명령문 슬로건 — 실천 방안 제안하기</span>
+    <div class="en-text" id="sloganEn"></div>
+    <div class="kr-text" id="sloganKr"></div>
+    <div class="scramble-lbl">👇 단어를 순서대로 클릭해서 문장을 완성해봐요!</div>
+    <div class="answer-box" id="sloganAns"></div>
+    <div class="word-pool" id="sloganPool"></div>
+    <div class="check-row">
+      <button class="check-btn" onclick="doCheck('slogan')">✅ 확인</button>
+      <button class="check-btn" onclick="doReset('slogan')">🔄 다시</button>
+      <span class="fb" id="sloganFb"></span>
+    </div>
+  </div>
+
+  <div class="section plan-sec" id="planSec">
+    <span class="sec-label">🌱 실천 계획 3가지 — Grow into Action!</span>
+    <div id="planList"></div>
+  </div>
+</div>
+
+<script>
+  // ⚠️ 여기에 Gemini API 키 입력!
+  const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE';
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+  const S = {
+    past:   { sentence:'', shuffled:[], placed:[] },
+    slogan: { sentence:'', shuffled:[], placed:[] }
+  };
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function tokenize(s) {
+    return s.replace(/([.,!?])/g, ' $1 ').trim().split(/\s+/).filter(Boolean);
+  }
+
+  function render(key) {
+    const pool = document.getElementById(key+'Pool');
+    const ans  = document.getElementById(key+'Ans');
+    pool.innerHTML = ''; ans.innerHTML = '';
+
+    S[key].placed.forEach((w, i) => {
+      const el = document.createElement('span');
+      el.className = 'placed-word';
+      el.textContent = w;
+      el.onclick = () => {
+        S[key].placed.splice(i, 1);
+        document.getElementById(key+'Fb').textContent = '';
+        render(key);
+      };
+      ans.appendChild(el);
+    });
+
+    const usedCount = {};
+    S[key].placed.forEach(w => { usedCount[w] = (usedCount[w]||0) + 1; });
+
+    S[key].shuffled.forEach(w => {
+      const total = S[key].shuffled.filter(x => x === w).length;
+      const used  = usedCount[w] || 0;
+      const el = document.createElement('span');
+      el.className = 'word' + (used >= total ? ' used' : '');
+      el.textContent = w;
+      el.onclick = () => {
+        const u = usedCount[w] || 0;
+        const t = S[key].shuffled.filter(x => x === w).length;
+        if (u >= t) return;
+        S[key].placed.push(w);
+        usedCount[w] = u + 1;
+        document.getElementById(key+'Fb').textContent = '';
+        render(key);
+      };
+      pool.appendChild(el);
+    });
+  }
+
+  function doReset(key) {
+    S[key].placed = [];
+    document.getElementById(key+'Fb').textContent = '';
+    render(key);
+  }
+
+  function doCheck(key) {
+    const correct = tokenize(S[key].sentence);
+    const placed  = S[key].placed;
+    const fb = document.getElementById(key+'Fb');
+    if (!placed.length) { fb.textContent = '단어를 클릭해봐요!'; fb.className = 'fb fail'; return; }
+    if (placed.join(' ') === correct.join(' ')) {
+      fb.textContent = '🎉 정답이에요!'; fb.className = 'fb ok';
+    } else {
+      fb.textContent = '🤔 다시 한번 해봐요!'; fb.className = 'fb fail';
+    }
+  }
+
+  function setupScramble(key, sentence) {
+    S[key].sentence = sentence;
+    S[key].shuffled = shuffle(tokenize(sentence));
+    S[key].placed   = [];
+    render(key);
+  }
+
+  async function generate() {
+    const prob = document.getElementById('prob').value.trim();
+    const sol  = document.getElementById('sol').value.trim();
+    if (!prob) { alert('문제 상황을 입력해주세요!'); return; }
+
+    const btn = document.getElementById('genBtn');
+    const loading = document.getElementById('loading');
+    const errorMsg = document.getElementById('errorMsg');
+
+    btn.disabled = true;
+    loading.style.display = 'block';
+    errorMsg.style.display = 'none';
+    ['pastSec','sloganSec','planSec'].forEach(id => document.getElementById(id).style.display = 'none');
+
+    const prompt = `당신은 한국 중학교 1학년 영어 수업 보조 AI입니다.
+학생이 입력한 한국어를 바탕으로 아래 내용을 만들어주세요.
+
+문제 상황: ${prob}
+해결 아이디어: ${sol || '학생이 직접 실천할 수 있는 방법'}
+
+조건:
+1. 과거시제 문장 1개: 문제 상황을 영어 과거시제로 설명 (중1 수준, 7단어 이내, 쉬운 어휘)
+2. 명령문 슬로건 1개: 실천 방안을 영어 명령문으로 (5단어 이내, 짧고 강렬하게)
+3. 실천 계획 3개: I will 또는 We will로 시작하는 구체적인 행동 (각 8단어 이내)
+
+반드시 아래 JSON 형식으로만 답하세요. 다른 말은 절대 하지 마세요:
+{"past_en":"영어 과거시제 문장","past_kr":"한국어 뜻","slogan_en":"영어 명령문 슬로건","slogan_kr":"한국어 뜻","plans":[{"en":"실천 계획 1","kr":"뜻 1"},{"en":"실천 계획 2","kr":"뜻 2"},{"en":"실천 계획 3","kr":"뜻 3"}]}`;
+
+    try {
+      const res = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+        })
+      });
+
+      const data = await res.json();
+      const text = data.candidates[0].content.parts[0].text;
+      const clean = text.replace(/```json|```/g, '').trim();
+      const r = JSON.parse(clean);
+
+      document.getElementById('pastEn').textContent   = r.past_en;
+      document.getElementById('pastKr').textContent   = r.past_kr;
+      document.getElementById('sloganEn').textContent = r.slogan_en;
+      document.getElementById('sloganKr').textContent = r.slogan_kr;
+
+      const planList = document.getElementById('planList');
+      planList.innerHTML = '';
+      r.plans.forEach((p, i) => {
+        planList.innerHTML += `
+          <div class="plan-item">
+            <div class="plan-num">${i+1}</div>
+            <div>
+              <div class="plan-en">${p.en}</div>
+              <div class="plan-kr">${p.kr}</div>
+            </div>
+          </div>`;
+      });
+
+      setupScramble('past', r.past_en);
+      setupScramble('slogan', r.slogan_en);
+      ['pastSec','sloganSec','planSec'].forEach(id => document.getElementById(id).style.display = 'block');
+
+    } catch(e) {
+      errorMsg.textContent = '오류가 발생했어요. API 키를 확인하거나 잠시 후 다시 시도해주세요.';
+      errorMsg.style.display = 'block';
+    }
+
+    loading.style.display = 'none';
+    btn.disabled = false;
+  }
+</script>
+</body>
+</html>
